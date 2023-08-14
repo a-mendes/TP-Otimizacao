@@ -1,17 +1,18 @@
+param Pw, integer, > 0;				#Qtd de semanas
+
 #Sets
-set I := {1..15}; # Semanas do projeto	
-set J := {1..4}; # Áreas de Trabalho
-set K := {1..3}; #Turnos
-set K1 := {1..2}; #Turnos Regulares (Seg-Sex)
-set K2 := {3}; #Turnos de Sábado
-set L := {1..20}; #Trabalhadores 
+set I := {1..Pw};					# Semanas do projeto	
+set J := {1..4};					# Áreas de Trabalho
+set K := {1..3};					#Turnos
+set K1 := {1..2};					#Turnos Regulares (Seg-Sex)
+set K2 := {3};						#Turnos de Sábado
+set L := {1..20};					#Trabalhadores 
 
 #Parametros
 param lam {K, J};					#Horas semanais maximas
 param tau {K, J};					#Horas semanais minimas
 param Hmax {L};						#Carga horaria maxima
 param C {L, J};						#Especialidade
-param Pw;							#Qtd de semanas
 param bigM;
 
 #Variaveis de decisão
@@ -64,9 +65,9 @@ param lam:		1	2	3	4 :=
 			3	30	0	0	0;
 
 param tau:		1	2	3	4 :=
-			1	20	20	20	20
-			2	30	30	30	30
-			3	20	0	0	0;
+			1	12	12	12	12
+			2	16	16	16	16
+			3	12	0	0	0;
 
 #25% - 30hrs semanais
 #75% - 40hrs semanais
@@ -113,7 +114,7 @@ param C: 	1	2	3	4 :=
 		19	0	1	1	0
 		20	1	0	0	1;
 
-param Pw := 15;
+param Pw := 1;
 
 param bigM := 999999;
 
