@@ -4,7 +4,7 @@ set J := {1..4}; # Áreas de Trabalho
 set K := {1..3}; #Turnos
 set K1 := {1..2}; #Turnos Regulares (Seg-Sex)
 set K2 := {3}; #Turnos de Sábado
-set L := {1..20}; #Trabalhadores 
+set L := {1..10}; #Trabalhadores 
 
 #Parametros
 param lam {K, J};					#Horas semanais maximas
@@ -21,7 +21,9 @@ var F_plus{L, I}, integer, >= 0;	#Numero de horas extras
 var F_min{L, I}, integer, >= 0; 	#Numero de horas nao trabalhadas
 
 #Funções Objetivas
-minimize FO: 0.47 * (sum{l in L, i in I}  F_min[l, i]) + 0.53 * (sum{l in L, i in I} F_plus[l, i]); 
+#minimize FO: sum{l in L, i in I}  F_min[l, i] ;
+minimize FO: 0.47 * (sum{l in L, i in I}  F_min[l, i]) + 
+			 0.53 * (sum{l in L, i in I} F_plus[l, i]); 
 
 
 #Conjunto de Restrições
@@ -44,10 +46,10 @@ minimo_horas_produtividade{i in I, j in J, k in K}: sum{l in L} Y[i, j, k, l] >=
 horas_contrato{i in I, l in L}: (sum{j in J, k in K} Y[i, j, k, l]) + F_min[l, i] - F_plus[l, i] == Hmax[l];
 
 #9
-mesma_area_semana_seguinte{h in I, j in J, l in L: h < Pw and h mod 2 == 1}: sum{k in K1} X[h, j, k, l] == sum{k in K1} X[h+1, j, k, l];
+mesma_area_semana_seguinte{h in  I, j in J, l in L: h < Pw and h mod 2 == 1}: sum{k in K1} X[h, j, k, l] == sum{k in K1} X[h+1, j, k, l];
 
 #10 problemas aqui!!
-maximo_area_turno{l in L, k in {1, 2}, h in I: h < Pw and h mod 2 == 1}: sum{j in J}(X[h, j, k, l] + X[h+1, j, k , l]) <= 1;
+maximo_area_turno{l in L, k in {1, 2}, h in {1..14}: h < h**2 and h mod 2 == 1}: sum{j in J}(X[h, j, k, l] + X[h+1, j, k , l]) <= 1;
 
 #11
 turno_sabado{l in L, j in J, i in I, m in K2, n in K1}: X[i, j, m, l] <= X[i, j, n, l];
@@ -79,17 +81,7 @@ param Hmax := 	1 30
 				7 40
 				8 40
 				9 40
-				10 40
-				11 40
-				12 40
-				13 40
-				14 40
-				15 40
-				16 40
-				17 40
-				18 40
-				19 40
-				20 40;
+				10 40;
 
 param C: 	1	2	3	4 :=
 		1	0	0	0	1
@@ -101,17 +93,7 @@ param C: 	1	2	3	4 :=
 		7	0	1	1	1
 		8	1	0	0	0
 		9	1	0	0	1
-		10	1	0	1	0
-		11	1	0	1	1
-		12	1	1	0	0
-		13	1	1	0	1
-		14	1	1	1	0
-		15	1	1	1	1
-		16	0	1	1	1
-		17	0	0	1	0
-		18	1	0	1	0
-		19	0	1	1	0
-		20	1	0	0	1;
+		10	1	0	1	0;
 
 param Pw := 15;
 
