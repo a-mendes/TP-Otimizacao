@@ -12,7 +12,7 @@ set L := {1..20};					#Trabalhadores
 param lam {K, J};					#Horas semanais maximas
 param tau {K, J};					#Horas semanais minimas
 param Hmax {L};						#Carga horaria maxima
-param C {L, J};						#Especialidade
+param C {L, J};						#Especialidade	S
 param bigM;
 
 #Variaveis de decisão
@@ -22,7 +22,8 @@ var F_plus{L, I}, integer, >= 0;	#Numero de horas extras
 var F_min{L, I}, integer, >= 0; 	#Numero de horas nao trabalhadas
 
 #Funções Objetivas
-minimize FO: 0.47 * (sum{l in L, i in I}  F_min[l, i]) + 0.53 * (sum{l in L, i in I} F_plus[l, i]); 
+minimize FO: 0.47 * (sum{l in L, i in I}  F_min[l, i]) + 
+			0.53 * (sum{l in L, i in I} F_plus[l, i]); 
 
 
 #Conjunto de Restrições
@@ -33,7 +34,7 @@ alocacao_trabalhador{i in I, l in L}: sum{j in J, k in K1} X[i, j, k, l] <= 1;
 alocacao_trabalhador_especialidade {i in I, j in J, k in K, l in L}: X[i, j, k, l] <= C[l, j];
 
 #5
-horas_caso_trabalhe{i in I, j in J, k in K, l in L}: Y[i, j, k, l] <= X[i, j, k, l] * bigM;
+horas_caso_trabalhe{i in I, j in J, k in K, l in L}:Y[i, j, k, l] <= X[i, j, k, l] * bigM;
 
 #6
 carga_horaria_max{i in I, j in J, k in K, l in L}: Y[i, j, k, l] <= (lam[k, j] * X[i, j, k, l]) + F_plus[l, i];
@@ -47,7 +48,7 @@ horas_contrato{i in I, l in L}: (sum{j in J, k in K} Y[i, j, k, l]) + F_min[l, i
 #9
 mesma_area_semana_seguinte{h in I, j in J, l in L: h < Pw and h mod 2 == 1}: sum{k in K1} X[h, j, k, l] == sum{k in K1} X[h+1, j, k, l];
 
-#10 problemas aqui!!
+#10
 maximo_area_turno{l in L, k in {1, 2}, h in I: h < Pw and h mod 2 == 1}: sum{j in J}(X[h, j, k, l] + X[h+1, j, k , l]) <= 1;
 
 #11
@@ -57,6 +58,9 @@ turno_sabado{l in L, j in J, i in I, m in K2, n in K1}: X[i, j, m, l] <= X[i, j,
 areas_proibidas_sabado{i in I, j in {2, 3, 4}, l in L, m in K2}: X[i, j, m, l] == 0;
 
 solve;
+
+printf{i in I, j in J, k in K, l in L: Y[i, j, k, l] <> 0} "Y[%s, %s, %s, %s] = %g\n", i, j, k, l, Y[i, j, k, l];
+
 data;
 
 param lam:		1	2	3	4 :=
